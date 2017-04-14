@@ -1,0 +1,36 @@
+$designWidth: 750px;			              // 设计图宽度
+
+@function toUnit($val) {
+  @return $val / $designWidth * 7.5rem;
+}
+
+@mixin fontsize($size) {
+  font-size: toUnit($size);
+
+  // [data-dpr="1"] & {
+  //   font-size: $size / 2;
+  // }
+
+  // [data-dpr="2"] & {
+  //   font-size: $size;
+  // }
+
+  // [data-dpr="3"] & {
+  //   font-size: $size * 1.5;
+  // }
+}
+
+@mixin transition($transitions...) {
+	-webkit-transition: $transitions;
+	transition: $transitions;
+}
+
+@mixin animation($animation...) {
+  -webkit-animation: $animation;
+  animation: $animation;
+}
+
+@mixin transform($transforms...) {
+	-webkit-transform: $transforms;
+	transform: $transforms;
+}

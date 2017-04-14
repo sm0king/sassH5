@@ -1,0 +1,11 @@
+/* line 3, /Users/aaron/Develop/migu-music/dev-specs/h5-stub/src/style.scss */
+body {
+  font-size: 0.24rem;
+  padding: 0.2rem;
+}
+
+/* line 8, /Users/aaron/Develop/migu-music/dev-specs/h5-stub/src/style.scss */
+body > div {
+  -webkit-transition: all 400ms ease 100ms;
+  transition: all 400ms ease 100ms;
+}

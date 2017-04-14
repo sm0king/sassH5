@@ -1,0 +1,10 @@
+@import "./fn";
+
+body {
+	@include fontsize(24px);
+	padding: toUnit(20px);
+}
+
+body > div {
+	@include transition(all 400ms ease 100ms);
+}
