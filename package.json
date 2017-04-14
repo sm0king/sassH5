@@ -1,7 +1,10 @@
 {
-  "name": "h5sass布局方案",
+  "name": "h5sass",
   "version": "1.0.0",
   "private": true,
+  "dependencies":{
+    
+  },
   "devDependencies": {
     "browser-sync": "^2.10.1",
     "del": "^2.2.0",
