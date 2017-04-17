@@ -25,6 +25,24 @@ sass 开发参考 _fn.scss ，先将设计图宽度 配置到 $designWidth ， �
 
 边框 border 依然使用px 不使用rem
 
+新建项目就在此目录下新建新的文件夹作为新的目录，这样开发的时候就可以使用如下命令开发
+
+```shell
+1. gulp start --src [folder name] 
+```
+
+使用如下命令打包：
+
+```shell
+1. gulp release --src [folder name] --src [folder name]
+```
+
+特别注意，
+
+如果使用的JS和CSS在打包的时候加载在页面中
+在html中使用引入js和css时，使用 <!-- import(**/**/*.{js,html}) --> 的方式进行引入
+如果依然使用正常的方式进入js则使用 <!-- link(**/**/*.{js,html}) --> 的方式进行引入 或者正常引入
+
 ## 注意事项
 
 1. npm install 的时候有可能会报node-sass 错误，可以执行
