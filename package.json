@@ -16,5 +16,8 @@
     "gulp-watch": "latest",
     "run-sequence": "latest",
     "through2": "latest"
+  },
+  "scripts":{
+    "release": "gulp release"
   }
 }
