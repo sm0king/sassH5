@@ -39,7 +39,7 @@ while (cmdargs.length) {
 
 // 参数配置
 var release = cmdname === "release";
-var reloadTimer = null;
+// var reloadTimer = null;
 var devport = 5678;
 var paths = {
 	src: path.join(__dirname, srcpath),
@@ -143,7 +143,7 @@ gulp.task("import", function() {
 		var rimport = /<!--\s+(import|link)\((.+?)\)\s+-->/g;
 		// var stats = isRelease ? require("./release.stats.json") : {};
 		var has = {};
-		var recontent = through2.obj(function(file, enc, cb) {
+		return through2.obj(function(file, enc, cb) {
 			var raw = file.contents.toString();
 			raw = raw.replace(rimport, function(a, t, src) {
 				var abs = path.join(dest, src);
@@ -181,7 +181,7 @@ gulp.task("import", function() {
 			cb();
 		})
 		// console.log(recontent);
-		return recontent;
+		// return recontent;
 	}
 
 	return gulp.src([
@@ -190,6 +190,7 @@ gulp.task("import", function() {
 		.pipe(plumber())
 		.pipe(through2.obj(function(file, enc, cb) {
 			var url = file.path.replace(base, "");
+			url = url.replace(/\\/g, "/");
 			hotcached[url] = url;
 			this.push(file);
 			cb();
@@ -202,6 +203,9 @@ gulp.task("import", function() {
 
 // # serv & watch
 gulp.task("server", function() {
+	var rebuildTimer = null;
+	var reloadTimer = null;
+	var rebuildTasks = [];
 	// start server
 	browserSync.init({
 		ui: false,
@@ -213,17 +217,20 @@ gulp.task("server", function() {
 	});
 
 	// # watch src资源, 调用相关任务预处理
-	watch(paths.src + "/**/*.scss", function(obj) {
-		sequence("sass");
-	});
-
-	// # 刷新浏览器
-	// # 限制浏览器刷新频率
 	watch(paths.src + "/**/*", function(obj) {
 		var url = obj.path.replace(/\\/g, "/");
 		var absurl = url;
 		url = path.relative(paths.src, url);
+		// scss
+		if (/\.scss$/.test(url)) {
+			pushTask("sass");
+		}
 
+		// copy 静态资源
+		if (/\.html$|(?:img|js)\/.*?\.(?:html|js|png|svg|jpg|gif|mp3)$/.test(url)) {
+			cpFile.push(absurl);
+			pushTask("copy:dist");
+		}
 		if (hotcached) {
 			for (var p in hotcached) {
 				if (absurl.indexOf(p) > 0) {
@@ -232,14 +239,38 @@ gulp.task("server", function() {
 				}
 			}
 		}
-
-		// skip scss
-		if (!/\.scss$/.test(url)) {
-			if (reloadTimer) {
-				clearTimeout(reloadTimer);
-			}
-			reloadTimer = setTimeout(reload, 1000);
+		// 输出文件名
+		if (rebuildTasks.length) {
+			console.log("[change file] " + url);
+			rebuild();
 		}
+	});
+
+	function pushTask(name) {
+		if (rebuildTasks.indexOf(name) === -1) {
+			rebuildTasks.push(name);
+		}
+	}
+
+	function rebuild() {
+		if (rebuildTimer) {
+			clearTimeout(rebuildTimer);
+		}
+		rebuildTimer = setTimeout(function() {
+			var tasks = rebuildTasks.slice(0);
+			rebuildTasks = [];
+			if (tasks.length) {
+				sequence.apply(null, tasks);
+			}
+		}, 500);
+	}
+
+	// # 限制浏览器刷新频率
+	watch(paths.dev + "/**/*", function() {
+		if (reloadTimer) {
+			clearTimeout(reloadTimer);
+		}
+		reloadTimer = setTimeout(reload, 1000);
 	});
 });
 
