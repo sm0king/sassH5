@@ -69,7 +69,7 @@ function setOptions(cmd, cmdopts) {
 function showUsage() {
 	console.log("Usage:\n");
 	console.log("     gulp                   显示帮助");
-	console.log("     gulp help              显示帮助");
+	console.log("     gulp help              显示帮助 , 更多开发帮助，请查看README文件。");
 	console.log("     gulp start --src src   在--src目录下自动化开发调试环境");
 	console.log("     gulp release --src src --dist dist 构建--src线上版本到--dist目录\n");
 }
