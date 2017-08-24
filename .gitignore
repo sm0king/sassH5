@@ -1,5 +1,13 @@
-node_modules
-**/**/dev
-**/**/dist
-*.log
-*.lock
+# node_modules
+# **/**/dev
+# **/**/dist
+# *.log
+# *.lock
+# 过滤掉所有的文件及文件夹
+**/**
+# 增加需要跟踪的文件
+!.gitignore
+!gulpfile.js
+!package.json
+!README.md
+!h5-stub/src/
