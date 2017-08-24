@@ -59,10 +59,11 @@ folder name
  ```shell
  npm install node-saas
  ```
- 
+
 先安装gulp-sass的依赖模块 sass，其余错误请自行google、百度。
 
 2. 如果使用npm install  安装失败，可以使用yarn安装，或者使用淘宝的镜像
+
  ```shell
  npm config set registry https://registry.npm.taobao.org
  ```
