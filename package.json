@@ -18,6 +18,7 @@
     "through2": "latest"
   },
   "scripts":{
+    "help": "gulp help",
     "release": "gulp release"
   }
 }
