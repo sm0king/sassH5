@@ -37,13 +37,13 @@ folder name
     ├── dist            <发布目录>
 ```
 ```shell
-1. gulp start --src [folder name] 
+gulp start --src [folder name] 
 ```
 
 使用如下命令打包：
 
 ```shell
-1. gulp release --src [folder name] --src [folder name]
+gulp release --src [folder name] --src [folder name]
 ```
 
 特别注意，
@@ -74,6 +74,5 @@ folder name
  cnpm  install
  ```
  ​
-
- ### 有什么疑问和想法，可以随时找我 tianlong@lixin360.com
+### 有什么疑问和想法，可以随时找我 tianlong@lixin360.com
  
