@@ -179,9 +179,7 @@ gulp.task("import", function() {
 			file.contents = new Buffer(raw);
 			this.push(file);
 			cb();
-		})
-		// console.log(recontent);
-		// return recontent;
+		});
 	}
 
 	return gulp.src([

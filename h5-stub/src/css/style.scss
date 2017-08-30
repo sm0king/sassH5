@@ -3,6 +3,7 @@
 body {
 	@include fontsize(24px);
 	padding: toUnit(20px);
+	color: red;
 }
 
 body > div {
