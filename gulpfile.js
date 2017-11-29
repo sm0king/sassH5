@@ -110,6 +110,16 @@ gulp.task("uglify", function() {
 		.pipe(gulp.dest(dest));
 });
 // # 复制静态资源
+gulp.task("copy:dev", function() {
+	var base = paths.src;
+	var dest = paths.dev;
+	var urls = [
+		base + "/*.ico",
+		base + "/**/*.{html,js,css,png,svg,gif,jpg,mp3}"
+	]
+	return gulp.src(urls, {base: base})
+		.pipe(gulp.dest(dest));
+});
 gulp.task("copy:dist", function() {
 	var base = paths.src;
 	var dest = release ? paths.dist : paths.dev;
@@ -120,6 +130,7 @@ gulp.task("copy:dist", function() {
 	}else{
 		ccfile.push(base + "/**/*");
 	}
+	console.log('ccFiles: ',ccfile)
 	return gulp.src(ccfile, {base: base})
 		.pipe(gulp.dest(dest));
 });
@@ -137,7 +148,7 @@ gulp.task("import", function() {
         minifyCSS: release // 压缩页面CSS
     };
 
-	function hotreload(dest) {
+	function hotreload(base) {
 		var importTpl = '<$0 filepath="$1"$3>$2</$0>';
 		var linkTpl = '<$0 $1="$2"$3></$0>';
 		var rimport = /<!--\s+(import|link)\((.+?)\)\s+-->/g;
@@ -146,11 +157,11 @@ gulp.task("import", function() {
 		return through2.obj(function(file, enc, cb) {
 			var raw = file.contents.toString();
 			raw = raw.replace(rimport, function(a, t, src) {
-				var abs = path.join(dest, src);
-				var rel = path.relative(dest, abs).replace(/\\/g, "/");
+				var abs = path.join(base, src);
+				var rel = path.relative(base, abs).replace(/\\/g, "/");
 				var ext = path.parse(src).ext;
 				var url = src;
-				url = url;
+				console.log(url);
 				var map = [];
 				if (!release) {
 					t = "link";
@@ -164,7 +175,6 @@ gulp.task("import", function() {
 					];
 					hotcached[src] = src;
 				} else {
-					cpFile.push(abs);
 					map = [
 						ext === ".js" ? "script" : "link",
 						ext === ".js" ? "src" : "href",
@@ -194,7 +204,7 @@ gulp.task("import", function() {
 			cb();
 		}))
 		.on("error", console.log)
-		.pipe(hotreload(base))
+		.pipe(hotreload(paths.dev))
 		.pipe(htmlmin(options))
 		.pipe(gulp.dest(dest));
 });
@@ -286,5 +296,13 @@ gulp.task("start", function(cb) {
 
 gulp.task("release", function(cb) {
 	setOptions("release", cmdopts);
-	sequence("clean:dist", ["sass", "uglify"], "import", "copy:dist", cb);
+	sequence(
+		// 清理目录
+		"clean:dist", 
+		// 编译SASS 拷贝必要文件到开发目录
+		["sass", "copy:dev"],
+		// 引入，压缩等操作
+		"import",
+		"uglify",
+		"copy:dist","clean:dev", cb);
 });
