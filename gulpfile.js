@@ -48,6 +48,7 @@ var paths = {
 }
 var hotcached = {};
 var cpFile = [];
+var unJsFile = [];
 
 function normalizePath(url) {
 	if (url.charAt(0) === "/") {
@@ -103,9 +104,10 @@ gulp.task("sass", function() {
 
 // # 压缩js
 gulp.task("uglify", function() {
-	var base = paths.src;
+	var base = release ? paths.dev : paths.src;
 	var dest = paths.dist;
-	return gulp.src(base + "/**/*.js", {base: base})
+	var uglifyFiles = [base + "/**/*.js",...unJsFile];
+	return gulp.src(uglifyFiles, {base: base})
 		.pipe(uglify())
 		.pipe(gulp.dest(dest));
 });
@@ -121,7 +123,7 @@ gulp.task("copy:dev", function() {
 		.pipe(gulp.dest(dest));
 });
 gulp.task("copy:dist", function() {
-	var base = paths.src;
+	var base = release ? paths.dev : paths.src;
 	var dest = release ? paths.dist : paths.dev;
 	var ccfile = [base + "/*.ico","!" + base + "/**/*.scss"];
 	if (release) {
@@ -130,7 +132,6 @@ gulp.task("copy:dist", function() {
 	}else{
 		ccfile.push(base + "/**/*");
 	}
-	console.log('ccFiles: ',ccfile)
 	return gulp.src(ccfile, {base: base})
 		.pipe(gulp.dest(dest));
 });
@@ -161,7 +162,6 @@ gulp.task("import", function() {
 				var rel = path.relative(base, abs).replace(/\\/g, "/");
 				var ext = path.parse(src).ext;
 				var url = src;
-				console.log(url);
 				var map = [];
 				if (!release) {
 					t = "link";
@@ -173,6 +173,7 @@ gulp.task("import", function() {
 						has[abs] || (has[abs] = fs.readFileSync(abs, "utf-8")),
 						ext === ".svg" ? ' style="display:none"' : ''
 					];
+					ext === '.js' ? unJsFile = [...unJsFile,'!'+abs] :'';
 					hotcached[src] = src;
 				} else {
 					map = [
@@ -181,6 +182,7 @@ gulp.task("import", function() {
 						url,
 						ext === ".css" ? ' rel="stylesheet"' : ""
 					];
+					cpFile = [...cpFile, abs];
 				}
 				return (t === "import" ? importTpl : linkTpl).replace(/\$(\d+)/g, function(a, i) {
 					return map[i];
@@ -300,9 +302,9 @@ gulp.task("release", function(cb) {
 		// 清理目录
 		"clean:dist", 
 		// 编译SASS 拷贝必要文件到开发目录
-		["sass", "copy:dev"],
+		["sass","copy:dev"],
 		// 引入，压缩等操作
 		"import",
-		"uglify",
+		["uglify"],
 		"copy:dist","clean:dev", cb);
 });
