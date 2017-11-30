@@ -230,14 +230,13 @@ gulp.task("server", function() {
 	watch(paths.src + "/**/*", function(obj) {
 		var url = obj.path.replace(/\\/g, "/");
 		var absurl = url;
-		url = path.relative(paths.src, url);
+		url = path.relative(paths.src, url).replace(/\\/g, '/');
 		// scss
 		if (/\.scss$/.test(url)) {
 			pushTask("sass");
 		}
-
-		// copy 静态资源
-		if (/\.html$|(?:img|js)\/.*?\.(?:html|js|png|svg|jpg|gif|mp3)$/.test(url)) {
+		// copy img js images文件夹下的 静态资源
+		if (/\.html$|(?:img|js|images)\/.*?\.(?:html|js|png|svg|jpg|gif|mp3)$/.test(url)) {
 			cpFile.push(absurl);
 			pushTask("copy:dist");
 		}
