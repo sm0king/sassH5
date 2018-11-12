@@ -74,5 +74,5 @@ gulp release --src [folder name] --src [folder name]
  cnpm  install
  ```
  ​
-### 有什么疑问和想法，可以随时找我 tianlong@lixin360.com
+### 有什么疑问和想法，可以随时找我 lntianda@gmail.com
  
